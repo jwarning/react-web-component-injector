@@ -1,11 +1,11 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
 import camelCase from 'lodash/camelCase'
 import find from 'lodash/find'
 import forEach from 'lodash/forEach'
 import map from 'lodash/map'
+import React from 'react'
+import ReactDOM from 'react-dom'
 
-export function parseNode(components, node, shouldMount) {
+export function parseNode(componentList, node, shouldMount) {
   // if we are inside a React controlled component and the current node
   // is a text node then we want to return it as a string
   if (!shouldMount && node.nodeType === 3) {
@@ -13,7 +13,10 @@ export function parseNode(components, node, shouldMount) {
   }
 
   // look for a match in the list of custom defined components
-  let match = find(components, (e, key) => node.nodeName.toLowerCase() === key.toLowerCase())
+  let match = find(
+    componentList,
+    (e, key) => node.nodeName.toLowerCase() === key.toLowerCase()
+  )
 
   // if we are inside a React controlled component then match the dom node itself
   if (!match && !shouldMount) match = node
@@ -23,7 +26,7 @@ export function parseNode(components, node, shouldMount) {
     const childNodes = [...node.childNodes].filter(n => n.nodeType === 1)
 
     if (childNodes.length > 0) {
-      forEach(childNodes, c => parseNode(components, c, true))
+      forEach(childNodes, c => parseNode(componentList, c, true))
     }
 
     // if we have reached the end of a branch then return null
@@ -36,7 +39,10 @@ export function parseNode(components, node, shouldMount) {
     // loop through any props defined on the component instance
     forEach(node.attributes, attribute => {
       // camel case the name of each prop and remove the 'prop-' prefix
-      const name = camelCase(attribute.name.replace('prop-', ''))
+      let name = camelCase(attribute.name.replace('prop-', ''))
+
+      // deal with exceptions to the naming scheme
+      if (name === 'class') name = 'className'
 
       let value
       if (attribute.value.match(/^{|\[/)) {
@@ -66,18 +72,20 @@ export function parseNode(components, node, shouldMount) {
       return React.createElement(
         match.nodeName ? match.nodeName.toLowerCase() : match,
         props,
-        map([...node.childNodes], c => parseNode(components, c, false))
+        ...map([...node.childNodes], c => parseNode(componentList, c, false))
       )
     }
 
     // otherwise render the react root of this branch into the dom
 
     // map child components
-    props.children = map([...node.childNodes], c => parseNode(components, c, false))
+    const children = map([...node.childNodes], c =>
+      parseNode(componentList, c, false)
+    )
 
     // render the new component
-    const temp = document.createElement('div')
-    ReactDOM.render(React.createElement(match, props), temp)
-    node.parentNode.replaceChild(temp.firstChild, node)
+    const tempDiv = document.createElement('div')
+    ReactDOM.render(React.createElement(match, props, ...children), tempDiv)
+    node.parentNode.replaceChild(tempDiv.firstChild, node)
   }
 }
