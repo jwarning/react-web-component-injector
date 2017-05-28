@@ -43,6 +43,7 @@ export function parseNode(componentList, node, shouldMount) {
 
       // deal with exceptions to the naming scheme
       if (name === 'class') name = 'className'
+      else if (name === 'for') name = 'htmlFor'
 
       let value
       if (attribute.value.match(/^{|\[/)) {

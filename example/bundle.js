@@ -14247,7 +14247,7 @@ function parseNode(componentList, node, shouldMount) {
       var name = (0, _camelCase2.default)(attribute.name.replace('prop-', ''));
 
       // deal with exceptions to the naming scheme
-      if (name === 'class') name = 'className';
+      if (name === 'class') name = 'className';else if (name === 'for') name = 'htmlFor';
 
       var value = void 0;
       if (attribute.value.match(/^{|\[/)) {
