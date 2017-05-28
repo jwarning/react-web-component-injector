@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>React Web Component Injector</title>
+    <meta name="description" content="A scrollable, high-performance list component for React">
+    <link rel="stylesheet" href="example/styles.css">
+  </head>
+  <body>
+    <div class="container">
+      <h1>React Web Component Injector</h1>
+      <p>Example items</p>
+      <div id="app"></div>
+      <custom-component>1</custom-component>
+      <other-component>
+        <custom-component>3</custom-component>
+        <h2>
+            sdafdsfdsf
+          </h2>
+      </other-component>
+      <custom-component>2
+        <ul>
+          <li>one</li>
+          <li>two</li>
+          <li>three</li>
+        </ul>
+        <custom-component>testing
+          <custom-component>
+            <b>testing</b>
+          </custom-component>
+        </custom-component>
+      </custom-component>
+    </div>
+    <script src="example/bundle.js"></script>
+  </body>
+</html>
