@@ -5,7 +5,7 @@ import map from 'lodash/map'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-export function parseNode(componentList, node, shouldMount) {
+export function parseNode(componentList, globalProps, node, shouldMount) {
   // if we are inside a React controlled component and the current node
   // is a text node then we want to return it as a string
   if (!shouldMount && node.nodeType === 3) {
@@ -26,7 +26,7 @@ export function parseNode(componentList, node, shouldMount) {
     const childNodes = [...node.childNodes].filter(n => n.nodeType === 1)
 
     if (childNodes.length > 0) {
-      forEach(childNodes, c => parseNode(componentList, c, true))
+      forEach(childNodes, c => parseNode(componentList, globalProps, c, true))
     }
 
     // if we have reached the end of a branch then return null
@@ -72,8 +72,10 @@ export function parseNode(componentList, node, shouldMount) {
 
       return React.createElement(
         match.nodeName ? match.nodeName.toLowerCase() : match,
-        props,
-        ...map([...node.childNodes], c => parseNode(componentList, c, false))
+        { ...(!match.nodeName ? globalProps : {}), ...props },
+        ...map([...node.childNodes], c =>
+          parseNode(componentList, globalProps, c, false)
+        )
       )
     }
 
@@ -81,12 +83,15 @@ export function parseNode(componentList, node, shouldMount) {
 
     // map child components
     const children = map([...node.childNodes], c =>
-      parseNode(componentList, c, false)
+      parseNode(componentList, globalProps, c, false)
     )
 
     // render the new component
     const tempDiv = document.createElement('div')
-    ReactDOM.render(React.createElement(match, props, ...children), tempDiv)
+    ReactDOM.render(
+      React.createElement(match, { ...globalProps, ...props }, ...children),
+      tempDiv
+    )
     node.parentNode.replaceChild(tempDiv.firstChild, node)
   }
 }

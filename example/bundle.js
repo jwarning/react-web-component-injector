@@ -14098,6 +14098,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 (0, _index.componentInit)({
   'custom-component': _CustomComponent2.default,
   'other-component': _OtherComponent2.default
+}, {
+  testProp: 'hi there'
 });
 
 /***/ }),
@@ -14128,12 +14130,12 @@ function _toConsumableArray(arr) {
 
 var dev = process.env.NODE_ENV !== 'production';
 
-function componentInit(components) {
+function componentInit(componentList, globalProps) {
   // parse the document body recursively
-  [].concat(_toConsumableArray(document.body.childNodes)).filter(function (n) {
-    return n.nodeType === 1;
-  }).forEach(function (n) {
-    return (0, _parser.parseNode)(components, n, true);
+  [].concat(_toConsumableArray(document.body.childNodes)).filter(function (node) {
+    return node.nodeType === 1;
+  }).forEach(function (node) {
+    return (0, _parser.parseNode)(componentList, globalProps, node, true);
   });
 }
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
@@ -14207,7 +14209,7 @@ function _toConsumableArray(arr) {
   }
 }
 
-function parseNode(componentList, node, shouldMount) {
+function parseNode(componentList, globalProps, node, shouldMount) {
   // if we are inside a React controlled component and the current node
   // is a text node then we want to return it as a string
   if (!shouldMount && node.nodeType === 3) {
@@ -14230,7 +14232,7 @@ function parseNode(componentList, node, shouldMount) {
 
     if (childNodes.length > 0) {
       (0, _forEach2.default)(childNodes, function (c) {
-        return parseNode(componentList, c, true);
+        return parseNode(componentList, globalProps, c, true);
       });
     }
 
@@ -14271,8 +14273,8 @@ function parseNode(componentList, node, shouldMount) {
       // if the component is already a child component
       // return the component instead of mounting it
 
-      return _react2.default.createElement.apply(_react2.default, [match.nodeName ? match.nodeName.toLowerCase() : match, props].concat(_toConsumableArray((0, _map2.default)([].concat(_toConsumableArray(node.childNodes)), function (c) {
-        return parseNode(componentList, c, false);
+      return _react2.default.createElement.apply(_react2.default, [match.nodeName ? match.nodeName.toLowerCase() : match, _extends({}, !match.nodeName ? globalProps : {}, props)].concat(_toConsumableArray((0, _map2.default)([].concat(_toConsumableArray(node.childNodes)), function (c) {
+        return parseNode(componentList, globalProps, c, false);
       }))));
     }
 
@@ -14280,12 +14282,12 @@ function parseNode(componentList, node, shouldMount) {
 
     // map child components
     var children = (0, _map2.default)([].concat(_toConsumableArray(node.childNodes)), function (c) {
-      return parseNode(componentList, c, false);
+      return parseNode(componentList, globalProps, c, false);
     });
 
     // render the new component
     var tempDiv = document.createElement('div');
-    _reactDom2.default.render(_react2.default.createElement.apply(_react2.default, [match, props].concat(_toConsumableArray(children))), tempDiv);
+    _reactDom2.default.render(_react2.default.createElement.apply(_react2.default, [match, _extends({}, globalProps, props)].concat(_toConsumableArray(children))), tempDiv);
     node.parentNode.replaceChild(tempDiv.firstChild, node);
   }
 }
@@ -14393,6 +14395,11 @@ var OtherComponent = function (_Component) {
           'h3',
           null,
           'My OtherComponent'
+        ),
+        _react2.default.createElement(
+          'h5',
+          null,
+          this.props.testProp
         ),
         _react2.default.createElement(
           'div',
