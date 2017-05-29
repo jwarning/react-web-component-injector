@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { componentInit } from '../dist/index'
+import { inject } from '../dist/index'
 import CustomComponent from './CustomComponent'
 import OtherComponent from './OtherComponent'
 
-componentInit(
+inject(
   {
     'custom-component': CustomComponent,
     'other-component': OtherComponent
