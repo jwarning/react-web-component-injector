@@ -14,7 +14,7 @@ React web component injector aims to make this process a little bit easier by pr
 
 Let's say we declare a custom html component called my-component:
 
-```
+```html
 <my-component>
   Hello World
 </my-component>
@@ -22,7 +22,7 @@ Let's say we declare a custom html component called my-component:
 
 and a React component like this:
 
-```
+```javascript
 import React, { Component } from 'react'
 
 class MyComponent extends Component {
@@ -41,7 +41,7 @@ export default MyComponent
 
 then when we run the following code on the page:
 
-```
+```javascript
 import { inject } from 'react-web-component-injector'
 import MyComponent from './MyComponent'
 
@@ -54,6 +54,25 @@ the original component will be replaced by a React controlled component at the s
 
 ## API
 
+###### `inject(componentList, globalProps)`
+
+The inject methods take a map of your custom components in the format of:
+
+```javascript
+{
+  'custom-selector': ReactComponent,
+  'super-awesome-component': SuperAwesomeComponent
+}
+```
+
+and an optional map of global props which will get injected into all the components:
+
+```javascript
+{
+  myProp: 'value goes here',
+  anotherProp: 12345
+}
+```
 
 ## License
 
