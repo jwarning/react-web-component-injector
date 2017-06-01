@@ -1,6 +1,6 @@
 {
   "name": "react-web-component-injector",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "React Web Component Injector",
   "author": "Jonathan Warning",
   "license": "MIT",
@@ -17,6 +17,9 @@
   "scripts": {
     "build": "babel index.js src/**/* -d dist && webpack",
     "prepublish": "npm run build"
+  },
+  "dependencies": {
+    "lodash": "^4.17.4"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

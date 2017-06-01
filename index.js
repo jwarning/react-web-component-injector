@@ -1,4 +1,3 @@
-import 'babel-polyfill'
 import { parseNode } from './src/parser'
 
 const dev = process.env.NODE_ENV !== 'production'
