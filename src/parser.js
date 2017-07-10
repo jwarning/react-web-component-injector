@@ -1,6 +1,7 @@
 import camelCase from 'lodash/camelCase'
 import find from 'lodash/find'
 import forEach from 'lodash/forEach'
+import fromPairs from 'lodash/fromPairs'
 import map from 'lodash/map'
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -46,7 +47,17 @@ export function parseNode(componentList, globalProps, node, shouldMount) {
       else if (name === 'for') name = 'htmlFor'
 
       let value
-      if (attribute.value.match(/^{|\[/)) {
+      if (name === 'style') {
+        // if the value is a css style, we want to camelCase the key names and create a JS object
+        value = fromPairs(
+          attribute.value.split(';').map(e => e.trim()).filter(e => e).map(e =>
+            e.split(':').map((f, i) => {
+              if (i === 0) return camelCase(f.trim())
+              return f.trim()
+            })
+          )
+        )
+      } else if (attribute.value.match(/^{|\[/)) {
         // value is a json object or array
         value = JSON.parse(attribute.value)
       } else if (attribute.value.trim() === 'true') {

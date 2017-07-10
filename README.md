@@ -54,7 +54,7 @@ the original component will be replaced by a React controlled component at the s
 
 ## API
 
-###### `inject(componentList, globalProps)`
+##### `inject(componentList, globalProps)`
 
 The inject methods take a map of your custom components in the format of:
 
